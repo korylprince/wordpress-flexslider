@@ -1,0 +1,11 @@
+#flexslider_image {
+    width: 100%;
+    max-width: 400px;
+    padding: 2px;
+    border: 1px solid #eee;
+    margin: 5px;
+}
+
+#flexslider_remove {
+    display: none;
+}
