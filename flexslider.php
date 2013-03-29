@@ -84,7 +84,7 @@ function flexslider_create_meta_box($post) {
         .'<img id="flexslider_image" src="'.wp_get_attachment_url($image_id).'"/><br />'
         .'<input class="button" type="button" name="_flexslider_button" id="_flexslider_button" value="Upload" />'
         .'<input type="hidden" name="_flexslider_image" id="_flexslider_image" />'
-        .'<a href="#" id="flexslider_remove">Remove</a>'
+        .'<a id="flexslider_remove">Remove</a>'
         .'</div>';
     
 
@@ -125,5 +125,42 @@ function flexslider_save( $post_id ) {
 function flexslider_invalid_order($loc) {
     return add_query_arg('flexslider_message',1,$loc);
 }
+
+function flexslider_shortcode($attrs) {
+
+    echo '
+<div class="flexslider">
+    <ul class="slides">';
+    
+    $posts = new WP_Query( 'meta_key=_flexslider_image' );
+    $posts = $posts->posts;
+    $pages = new WP_Query( 'meta_key=_flexslider_image&post_type=page' );
+    $pages = $pages->posts;
+    foreach( array_merge($posts,$pages) as $post) {
+        $id = $post->ID;
+        echo '<li data-order="'.get_post_meta($id,'_flexslider_order',true).'"><a class="slider-link" href="'.get_permalink($id).'"><img src="'.wp_get_attachment_url(get_post_meta($id,'_flexslider_image',true), 'large' ).'" /></a></li>';
+
+    }
+
+    echo '</ul></div>';
+
+    echo '<script type="text/javascript">
+    jQuery(window).load(function() {
+        var li = jQuery(".slides li");
+        li.detach().sort(function(a,b){
+            var ao = jQuery(a).data("order") || 1000;
+            var bo = jQuery(b).data("order") || 1000;
+            return ao-bo;
+        });
+        jQuery(".slides").append(li);
+        jQuery(".flexslider").flexslider({
+            animation: "fade",
+            smoothHeight: true,
+            animationSpeed: 500
+        });
+    });
+</script>';
+}
+add_shortcode('flexslider','flexslider_shortcode');
 
 ?>
