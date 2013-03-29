@@ -8,7 +8,7 @@ jQuery(document).ready(function($){
   }
 
   $("#flexslider_remove").click(function(e) {
-      $("#flexslider_image").attr('src','');
+      $("#flexslider_image").attr('src','').hide();
       $(this).hide();
       $('#_flexslider_button').show();
   });
@@ -20,7 +20,7 @@ jQuery(document).ready(function($){
     wp.media.editor.send.attachment = function(props, attachment){
       if ( _custom_media ) {
         $("#_flexslider_image").val(attachment.id);
-        $("#flexslider_image").attr('src',attachment.url);
+        $("#flexslider_image").attr('src',attachment.url).show();
         button.hide();
         $("#flexslider_remove").show();
       } else {
