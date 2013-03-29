@@ -24,8 +24,6 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-define('WP_DEBUG', true);
-
 wp_register_style('flexslider',plugins_url('css/flexslider.css', __FILE__));
 wp_register_style('flexslider-uploader',plugins_url('css/uploader.css', __FILE__));
 wp_register_script('flexslider',plugins_url('js/jquery.flexslider-min.js', __FILE__));
