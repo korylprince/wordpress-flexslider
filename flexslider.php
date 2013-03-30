@@ -112,6 +112,10 @@ function flexslider_save( $post_id ) {
         add_post_meta($post_ID, '_flexslider_order', $order, true) or
             update_post_meta($post_ID, '_flexslider_order', $order);
     }
+    elseif ($order == '') {
+        add_post_meta($post_ID, '_flexslider_order', $order, true) or
+            update_post_meta($post_ID, '_flexslider_order', $order);
+    }
     else {
         add_filter('redirect_post_location','flexslider_invalid_order');
     }
@@ -136,6 +140,8 @@ function flexslider_shortcode($attrs) {
     $pages = $pages->posts;
     foreach( array_merge($posts,$pages) as $post) {
         $id = $post->ID;
+        //skip if empty
+        if (get_post_meta($id,'_flexslider_image',true) == '') {continue;}
         echo '<li data-order="'.get_post_meta($id,'_flexslider_order',true).'"><a class="slider-link" href="'.get_permalink($id).'"><img src="'.wp_get_attachment_url(get_post_meta($id,'_flexslider_image',true), 'large' ).'" /></a></li>';
 
     }
