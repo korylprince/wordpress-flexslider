@@ -1,7 +1,7 @@
 wordpress-flexslider
 https://github.com/korylprince/wordpress-flexslider
 
-A flexslider wordpress plugin with a nice meta-box.
+A flexslider wordpress plugin with a nice meta-box. This uses the same style uploader as the featured image meta box, ajax and all.
 
 #Installing#
 

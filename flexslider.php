@@ -66,29 +66,32 @@ function flexslider_add_meta_box() {
 }
 
 function flexslider_create_meta_box($post) {
-
-
     wp_nonce_field( plugin_basename( __FILE__ ), 'flexslider_nonce' );
     $id = $post->ID;
     $order = get_post_meta($id, '_flexslider_order',true);
-    $image_id = get_post_meta($id, '_flexslider_image',true);
     if (isset($_GET['flexslider_message']) && $_GET['flexslider_message'] == 1 ) {
         echo '<strong style="color:#f00;">Order must be an Integer!</strong><br />';
     }
     echo '<label for="_flexslider_order">Order:</label> <input type="text" id="_flexslider_order" name="_flexslider_order" value="'.esc_attr($order).'" size="25" /><br />';
 
-    echo '<div class="uploader hide-if-nojs" id="flexslider-uploader">'
-        .'<label for="_flexslider_image">Slider Image:</label><br />'
-        .'<img id="flexslider_image" src="'.wp_get_attachment_url($image_id).'"/><br />'
-        .'<input class="button" type="button" name="_flexslider_button" id="_flexslider_button" value="Upload" />'
-        .'<input type="hidden" name="_flexslider_image" id="_flexslider_image" />'
-        .'<a id="flexslider_remove">Remove</a>'
+        echo '<div id="flexslider_uploader" data-type="'.get_post_type($id).'">'
+        .flexslider_create_image($id)
         .'</div>';
-    
+}
+
+function flexslider_create_image ($id) {
+    $image_id = get_post_meta($id, '_flexslider_image',true);
+    if ($image_id) {
+        return '<img id="flexslider_image" src="'.wp_get_attachment_url($image_id).'" data-id='.$image_id.' /><br />'
+            .'<a id="flexslider_remove">Remove Slider Image</a>';
+    }
+    else {
+        return '<a id="flexslider_add">Add Slider Image</a>';
+    }
 
 }
 
-function flexslider_save( $post_id ) {
+function flexslider_save( $post_id, $ajax ) {
     // First we need to check if the current user is authorised to do this action. 
     if ( 'page' == $_POST['post_type'] ) {
         if ( ! current_user_can( 'edit_page', $post_id ) )
@@ -108,27 +111,41 @@ function flexslider_save( $post_id ) {
 
     // Finally we can save the value to the database
     $post_ID = $_POST['post_ID'];
-    //sanitize user input
-    $order = sanitize_text_field( $_POST['_flexslider_order'] );
-    if (is_numeric($order)) {
-        $order = intval($order);
-        add_post_meta($post_ID, '_flexslider_order', $order, true) or
-            update_post_meta($post_ID, '_flexslider_order', $order);
-    }
-    elseif ($order == '') {
-        add_post_meta($post_ID, '_flexslider_order', $order, true) or
-            update_post_meta($post_ID, '_flexslider_order', $order);
+    if (!$ajax) {
+        //sanitize user input
+        $order = sanitize_text_field( $_POST['_flexslider_order'] );
+        if (is_numeric($order)) {
+            $order = intval($order);
+            add_post_meta($post_ID, '_flexslider_order', $order, true) or
+                update_post_meta($post_ID, '_flexslider_order', $order);
+        }
+        elseif ($order == '') {
+            add_post_meta($post_ID, '_flexslider_order', $order, true) or
+                update_post_meta($post_ID, '_flexslider_order', $order);
+        }
+        else {
+            add_filter('redirect_post_location','flexslider_invalid_order');
+        }
     }
     else {
-        add_filter('redirect_post_location','flexslider_invalid_order');
-    }
-    $image_id = sanitize_text_field( $_POST['_flexslider_image'] );
+        $image_id = sanitize_text_field( $_POST['_flexslider_image'] );
+        if ($image_id == -1) { $image_id = '';}
         add_post_meta($post_ID, '_flexslider_image', $image_id, true) or
-            update_post_meta($post_ID, '_flexslider_image', $image_id);
+        update_post_meta($post_ID, '_flexslider_image', $image_id);
+    }
 }
 
 function flexslider_invalid_order($loc) {
     return add_query_arg('flexslider_message',1,$loc);
+}
+
+add_action('wp_ajax_set-flexslider-image','flexslider_save_image');
+
+function flexslider_save_image() {
+    flexslider_save($_POST['post_ID'],true);
+    header('Content-type: text/json');
+    echo json_encode(array('success'=>true,'data'=>flexslider_create_image($_POST['post_ID'])));
+    die();
 }
 
 function flexslider_shortcode($attrs) {
