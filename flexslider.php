@@ -102,8 +102,11 @@ function flexslider_save( $post_id ) {
     if ( ! isset( $_POST['flexslider_nonce'] ) || ! wp_verify_nonce( $_POST['flexslider_nonce'], plugin_basename( __FILE__ ) ) )
         return;
 
-    // Thirdly we can save the value to the database
+    //Thirdly check if trying to autosave
+    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
+        return;
 
+    // Finally we can save the value to the database
     $post_ID = $_POST['post_ID'];
     //sanitize user input
     $order = sanitize_text_field( $_POST['_flexslider_order'] );
