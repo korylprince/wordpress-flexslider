@@ -91,7 +91,7 @@ function flexslider_create_image ($id) {
 
 }
 
-function flexslider_save( $post_id, $ajax ) {
+function flexslider_save( $post_id, $ajax = false ) {
     // First we need to check if the current user is authorised to do this action. 
     if ( 'page' == $_POST['post_type'] ) {
         if ( ! current_user_can( 'edit_page', $post_id ) )
