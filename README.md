@@ -16,7 +16,7 @@ Each post or page will have a new meta-box upon activation of the plugin. From h
 
 To add to your page or theme you can use the short code [flexslider].
 
-Alternatively, you can use the function flexslide\_shortcode(array()).
+Alternatively, you can use the function flexslider\_shortcode(array()).
 
 Currently there are no options and you can only have one site-wide flexslider. This shouldn't be too hard to modify for your needs.
 
