@@ -26,8 +26,8 @@ jQuery(document).ready(function(){
             // Overload the library's comparator to push items that are not in
             // the mirrored query to the front of the aggregate collection.
             library.comparator = function( a, b ) {
-                var aInQuery = !! this.mirroring.getByCid( a.cid ),
-                    bInQuery = !! this.mirroring.getByCid( b.cid );
+                var aInQuery = !! this.mirroring.get( a.cid ),
+                    bInQuery = !! this.mirroring.get( b.cid );
 
                 if ( ! aInQuery && bInQuery )
                     return -1;
@@ -124,6 +124,6 @@ jQuery(document).ready(function(){
         }
     };
     //propagate settings
-    wp.media.view.settings.post.flexsliderImageId = jQuery("#flexslider_image").data("id");
+    wp.media.view.settings.post.flexsliderImageId = jQuery("#flexslider_image").data("id") || -1;
     jQuery( wp.media.flexsliderImage.init );
 });
